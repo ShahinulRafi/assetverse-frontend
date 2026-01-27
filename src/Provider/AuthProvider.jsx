@@ -1,27 +1,49 @@
-import { 
-  createUserWithEmailAndPassword, 
-  GoogleAuthProvider, 
-  onAuthStateChanged, 
-  signInWithPopup 
-} from 'firebase/auth';
-import React, { createContext, useEffect, useState } from 'react';
-import {auth} from '../firebase/firebase.config';
-
-export const AuthContext = createContext();
-
+import React, { useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
+import axios from "axios";
 const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState("");
 
-  const registerWithEmailPassword = (email, pass) => {
-    return createUserWithEmailAndPassword(auth, email, pass);
+  const createUser = (email, password) => {
+    setLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  const handleGoogleSignin = () => {
+  const signInUser = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+  const signInWithGoogle = () => {
+    setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
+  const signOutUser = () => {
+    setLoading(true);
+    return signOut(auth);
+  };
+
+  
+  useEffect(() => {
+    if (!user) return;
+    axios.get(`http://localhost:3000/user/role/${user?.email}`).then((res) => {
+      console.log("User role response:", res.data.role);
+      setRole(res.data.role);
+      setLoading(false);
+    });
+  }, [user]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -32,18 +54,19 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const authData = {
-    registerWithEmailPassword,
-    setUser,
+  const authInfo = {
     user,
-    handleGoogleSignin,
-    loading
+    loading,
+    createUser,
+    signInUser,
+    signInWithGoogle,
+    signOutUser,
+    role
   };
-
   return (
-    <AuthContext.Provider value={authData}>
-      {children}
-    </AuthContext.Provider>
+    <div>
+      <AuthContext value={authInfo}>{children}</AuthContext>
+    </div>
   );
 };
 

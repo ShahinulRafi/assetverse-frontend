@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { auth } from "../../firebase/firebase.config";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router";
-import { AuthContext } from "../../Provider/AuthProvider.jsx";
+// import { AuthContext } from "../../Provider/AuthProvider.jsx";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Register = () => {
   const [success, setSuccess] = useState(false);
@@ -45,6 +46,12 @@ const Register = () => {
       return;
     }
 
+    const formData = {
+      name,
+      photoURL,
+      email,
+      password,
+    }
     // createUser(email, password);
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
@@ -54,7 +61,17 @@ const Register = () => {
         updateProfile(result.user, {
           displayName: name,
           photoURL: photoURL,
-        }).catch((error) => console.log("Profile update error:", error));
+        })
+        .then(() => {
+          axios.post('http://localhost:3000/users', formData)
+          .then(res=>{
+            console.log('User data saved:', res.data);
+          })
+          .catch(err=>{
+            console.log('Error saving user data:', err);
+          });
+        })
+        .catch((error) => console.log("Profile update error:", error));
 
         // sendEmailVerification(result.user)
         //   .then(() => {
@@ -75,7 +92,7 @@ const Register = () => {
   };
   return (
     <div>
-      <title>Register - RentWheel</title>
+      <title>Register - AssetVerse</title>
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left">
