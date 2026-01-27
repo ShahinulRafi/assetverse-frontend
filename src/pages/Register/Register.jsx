@@ -18,20 +18,23 @@ const Register = () => {
     console.log(
       "Register Button Clicked",
       e.target.email.value,
-      e.target.password.value
+      e.target.password.value,
     );
     const name = e.target.name.value;
     const photoURL = e.target.photoURL.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const checked = e.target.terms.checked;
+    const role = e.target.role.value;
+
+    // console.log("Role selected:", role);
+    // return;
 
     setSuccess(false);
     setError("");
 
-    if(!name || !email || !photoURL || !password)
-    {
-      toast.error("You must fill all the input fields to register!")
+    if (!name || !email || !photoURL || !password) {
+      toast.error("You must fill all the input fields to register!");
       return;
     }
     if (!checked) {
@@ -41,7 +44,7 @@ const Register = () => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     if (!passwordPattern.test(password)) {
       toast.error(
-        "Password must be at least 6 characters long and contain at least one uppercase and one lowercase letter."
+        "Password must be at least 6 characters long and contain at least one uppercase and one lowercase letter.",
       );
       return;
     }
@@ -51,7 +54,8 @@ const Register = () => {
       photoURL,
       email,
       password,
-    }
+      role
+    };
     // createUser(email, password);
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
@@ -62,16 +66,17 @@ const Register = () => {
           displayName: name,
           photoURL: photoURL,
         })
-        .then(() => {
-          axios.post('http://localhost:3000/users', formData)
-          .then(res=>{
-            console.log('User data saved:', res.data);
+          .then(() => {
+            axios
+              .post("http://localhost:3000/users", formData)
+              .then((res) => {
+                console.log("User data saved:", res.data);
+              })
+              .catch((err) => {
+                console.log("Error saving user data:", err);
+              });
           })
-          .catch(err=>{
-            console.log('Error saving user data:', err);
-          });
-        })
-        .catch((error) => console.log("Profile update error:", error));
+          .catch((error) => console.log("Profile update error:", error));
 
         // sendEmailVerification(result.user)
         //   .then(() => {
@@ -97,7 +102,9 @@ const Register = () => {
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left">
             <h1 className="text-5xl font-bold">Register now!</h1>
-            <p className="py-6">Register and enjoy browsing our car rental service!</p>
+            <p className="py-6">
+              Register and enjoy browsing our car rental service!
+            </p>
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
             <div className="card-body">
@@ -125,6 +132,11 @@ const Register = () => {
                     className="input"
                     placeholder="Photo URL"
                   />
+                  <select name="role" defaultValue="Pick a role" className="select">
+                    <option disabled={true}>Pick a color</option>
+                    <option value='manager'>Manager</option>
+                    <option value='buyer'>Buyer</option>
+                  </select>
                   <label className="label">Password</label>
                   <div className="relative">
                     <input

@@ -4,6 +4,9 @@ import RootLayout from '../RootLayout/RootLayout';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
+import DashboardLayout from '../DashboardLayout/DashboardLayout';
+import MainDashboard from '../pages/Dashboard/MainDashboard/MainDashboard';
+import AddAssets from '../pages/Dashboard/AddAssets/AddAssets';
 
 const router = createBrowserRouter([
     {
@@ -22,6 +25,20 @@ const router = createBrowserRouter([
             {
                 path: '/register',
                 Component: Register
+            }
+        ]
+    },
+    {
+        path: '/dashboard',
+        element: <DashboardLayout></DashboardLayout>,
+        children: [
+            {
+                path: 'main',
+                Component: MainDashboard
+            },
+            {
+                path: 'add-assets',
+                Component: AddAssets
             }
         ]
     }
