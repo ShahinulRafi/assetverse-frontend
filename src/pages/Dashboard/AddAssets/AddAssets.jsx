@@ -1,34 +1,40 @@
 import React from "react";
-import axios from "axios";
+// import axios from "axios";
+import useAxios from "../../../hooks/useAxios";
+import { useContext } from "react";
+import { AuthContext } from "../../../Provider/AuthContext";
 
 const AddAssets = () => {
+  const axiosInstance = useAxios();
+  const {user} = useContext(AuthContext);
 
-const handleAddAsset = (e) => {
+  const handleAddAsset = (e) => {
     e.preventDefault();
     const form = e.target;
     const productName = form.productName.value;
     const productImage = form.productImage.files[0];
     const productType = form.productType.value;
     const productQuantity = form.productQuantity.value;
-    
-    
+
     const newAsset = {
-        productName,
-        productImage,
-        productType,
-        productQuantity:parseInt(productQuantity)
-    }
+      productName,
+      productImage,
+      productType,
+      productQuantity: parseInt(productQuantity),
+      managerEmail: user?.email
+    };
 
     console.log(newAsset);
-    axios.post('http://localhost:3000/assets', newAsset)
-    .then(response => {
-        alert('Asset added successfully:', response.data);
+    axiosInstance
+      .post("/assets", newAsset)
+      .then((response) => {
+        alert("Asset added successfully:", response.data);
         // form.reset();
-    })
-    .catch(error => {
-        console.error('Error adding asset:', error);
-    });
-}
+      })
+      .catch((error) => {
+        console.error("Error adding asset:", error);
+      });
+  };
   return (
     <div>
       <h2>Add Assets</h2>

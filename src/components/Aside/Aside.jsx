@@ -30,7 +30,13 @@ const Aside = () => {
           <li>
             <NavLink to="/dashboard/add-assets" className="active">
               <LayoutDashboard size={18} />
-              Assets
+              Add Assets
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/manage-assets" className="active">
+              <LayoutDashboard size={18} />
+              Assets List
             </NavLink>
           </li>
 
